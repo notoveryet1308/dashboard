@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { MenuProps } from "antd";
 
 import { STOCK_SYMBOLS } from "../components/Stocks/type";
