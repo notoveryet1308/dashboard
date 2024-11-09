@@ -32,6 +32,7 @@ const BG_IMAGE = {
   "11d": THUNDER,
   "13d": SNOW,
   "50d": MIST,
+  "04n": FEW_CLOUDS,
 };
 
 export type WeatherDataType = {
@@ -64,7 +65,7 @@ export const getWeatherData = async ({
     description: weather[0].description,
     country: COUNTRY_CODE[sys.country as keyof typeof COUNTRY_CODE],
     iconUrl: iconBaseUrl + weather[0].icon + "@2x.png",
-    bgImage: BG_IMAGE[weather[0].icon as keyof typeof BG_IMAGE],
+    bgImage: BG_IMAGE[weather[0].icon as keyof typeof BG_IMAGE] || CLEAR_SKY,
     temperature: convertKelvinToCelsius(main.temp).toFixed(1),
   };
 };
