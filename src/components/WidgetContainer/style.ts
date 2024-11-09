@@ -12,6 +12,7 @@ export const StyledWidgetContainerWrapper = styled.div<{ $isOver: boolean }>`
   .widgets {
     display: flex;
     flex-wrap: wrap;
+    align-items: flex-start;
     gap: 24px;
     padding: 24px 0 16px 0;
   }
