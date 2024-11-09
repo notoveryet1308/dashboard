@@ -1,9 +1,5 @@
 import styled, { css } from "styled-components";
 
-/* transform: translateX(
-      ${({ $isExpanded }) => ($isExpanded ? "0" : "-100%")}
-    ); */
-
 const onExpand = () => css`
   transform: translateX(0);
   opacity: 1;
@@ -39,7 +35,6 @@ export const StyledWidgetListingWrapper = styled.div<{ $isExpanded: boolean }>`
     height: 100%;
     display: flex;
     transition: none;
-    padding: 16px 24px;
     flex-direction: column;
     transition-delay: 0.1s;
     background-color: inherit;
@@ -52,11 +47,13 @@ export const StyledWidgetListingWrapper = styled.div<{ $isExpanded: boolean }>`
       display: flex;
       flex-direction: column;
       gap: 12px;
+      border-bottom: 1px solid var(--container-border);
+      padding: 16px 24px;
 
       .widget-listing-collapse-btn {
         position: absolute;
-        top: -4px;
-        right: -38px;
+        top: 12px;
+        right: -14px;
         color: var(--brand-color);
         cursor: pointer;
       }
@@ -69,8 +66,28 @@ export const StyledWidgetListingWrapper = styled.div<{ $isExpanded: boolean }>`
 
     .widgets-wrapper {
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
       gap: 12px;
+      padding: 0 24px;
     }
+  }
+`;
+
+export const StyledThumbnailWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--brand-secondary-color);
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: move;
+  border: 1px solid transparent;
+
+  .thumbnail-label {
+    font-size: 14px;
+  }
+
+  &:hover {
+    border-color: var(--brand-color);
   }
 `;

@@ -2,15 +2,23 @@ import { ReactNode, useRef, useEffect } from "react";
 
 import { StyledResizableWrapper } from "./style";
 
-type Dimension = { height: number; width: number; id: string };
+type Dimension = {
+  height: number;
+  width: number;
+  id: string;
+};
 
 const ResizableWrapper = ({
   id,
   children,
   getResizedDimension,
+  previousWidth,
+  previousHeight,
 }: {
   id: string;
   children: ReactNode;
+  previousWidth?: number;
+  previousHeight?: number;
   getResizedDimension: (data: Dimension) => void;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -29,7 +37,15 @@ const ResizableWrapper = ({
     return () => resizeObserver.disconnect();
   }, []);
 
-  return <StyledResizableWrapper ref={ref}>{children}</StyledResizableWrapper>;
+  return (
+    <StyledResizableWrapper
+      $height={previousHeight}
+      $width={previousWidth}
+      ref={ref}
+    >
+      {children}
+    </StyledResizableWrapper>
+  );
 };
 
 export default ResizableWrapper;

@@ -1,15 +1,21 @@
 import { useDrag } from "react-dnd";
+import { ReactNode } from "react";
 
-const Atom = ({ widget, label }: { widget: string; label: string }) => {
+import { WIDGET_THUMBNAIL_CONFIG } from "./constants";
+import { StyledThumbnailWrapper } from "./style";
+
+const Thumbnail = ({
+  widget,
+  label,
+  icon,
+}: {
+  widget: string;
+  label: string;
+  icon: ReactNode;
+}) => {
   const [, drag] = useDrag(() => ({
     type: "widgets",
     item: { widgetType: widget },
-    end: (item, monitor) => {
-      const dropResult = monitor.getDropResult();
-      if (item && dropResult) {
-        console.log({ item, dropResult });
-      }
-    },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
       handlerId: monitor.getHandlerId(),
@@ -17,28 +23,18 @@ const Atom = ({ widget, label }: { widget: string; label: string }) => {
   }));
 
   return (
-    <div
-      ref={drag}
-      style={{
-        width: "50px",
-        height: "50px",
-        background: "blue",
-        borderRadius: "50%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      {label}
-    </div>
+    <StyledThumbnailWrapper ref={drag}>
+      {icon}
+      <span className="thumbnail-label">{label}</span>
+    </StyledThumbnailWrapper>
   );
 };
 
 const WidgetThumbnails = () => (
   <div className="widgets-wrapper">
-    <Atom label="W1" widget="News" />
-    <Atom label="W2" widget="Stocks" />
-    <Atom label="W3" widget="Weather" />
+    {WIDGET_THUMBNAIL_CONFIG.map(({ icon, type, label }) => (
+      <Thumbnail key={label} widget={type} label={label} icon={icon} />
+    ))}
   </div>
 );
 

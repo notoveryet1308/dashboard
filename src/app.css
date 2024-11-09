@@ -1,5 +1,6 @@
 :root {
   --brand-color: #4e74f8;
+  --brand-secondary-color: #2b334f;
   --background-color: #0b0c0e;
   --header-border-bottom: #20232d;
   --container-border: #282a32;
@@ -7,4 +8,5 @@
   --background-secondary-color: #0b0a11;
   --border-secondary-color: #2b3357;
   --text-secondary-color: #c8c7c7;
+  --background-tertiary-color: #212122;
 }

@@ -1,61 +1,21 @@
-import { useEffect, useState } from "react";
-import { useDrop } from "react-dnd";
-import { v4 as uuidv4 } from "uuid";
-
-import Widgets, { WidgetTypes } from "../Widgets";
 import ResizableWrapper from "../ResizeableWrapper";
+import Widgets from "../Widgets";
+import { WidgetActions } from "../Widgets/constants";
 
-import { StyledWidgetContainerWrapper } from "./style";
 import EmptyContainer from "./EmptyContainer";
+import { StyledWidgetContainerWrapper } from "./style";
+import WidgetActionWrapper from "./WidgetActionWrapper";
 
-import localStorageService from "../../utils/localStorage";
-
-const WIDGET_DATA_KEY = "droppedWidgets";
-
-type DroppedWidgets = {
-  widgetType: WidgetTypes;
-  id: string;
-  isUnique?: boolean;
-  dimension?: { height: number; width: number };
-}[];
+import useWidgetContainerData from "./hooks/useWidgetContainerData";
 
 const WidgetContainer = () => {
-  const [droppedWidgets, setDroppedWidgets] = useState<DroppedWidgets>(localStorageService.getData(WIDGET_DATA_KEY).data || []);
-
-  const [{ isOver }, drop] = useDrop(() => ({
-    accept: "widgets",
-    drop: (droppedItem: { widgetType: WidgetTypes; isUnique?: boolean }) => {
-      const updatedDroppedWidgets = (previousData: DroppedWidgets) => [
-        ...previousData,
-        { ...droppedItem, id: uuidv4() },
-      ];
-      setDroppedWidgets(updatedDroppedWidgets);
-    },
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop(),
-    }),
-  }));
-
-  useEffect(() => {
-    localStorageService.setData(WIDGET_DATA_KEY, droppedWidgets);
-  }, [droppedWidgets]);
-
-  const getDimension = ({
-    width,
-    height,
-    id,
-  }: {
-    width: number;
-    height: number;
-    id: string;
-  }) => {
-    setDroppedWidgets((prevDroppedWidgets) =>
-      prevDroppedWidgets.map((widget) =>
-        widget.id === id ? { ...widget, dimension: { width, height } } : widget
-      )
-    );
-  };
+  const {
+    isOver,
+    drop,
+    getResizedDimension,
+    droppedWidgets,
+    widgetActionHandlers,
+  } = useWidgetContainerData();
 
   return (
     <StyledWidgetContainerWrapper $isOver={isOver} ref={drop}>
@@ -63,16 +23,29 @@ const WidgetContainer = () => {
         <EmptyContainer />
       ) : (
         <div className="widgets">
-          {droppedWidgets.map(({ id, widgetType }) => {
-            const WidgetCom = Widgets[widgetType];
+          {droppedWidgets.map(({ id, widgetType, dimension }) => {
+            //get the widget component based on widgetType
+            const WidgetComponent = Widgets[widgetType].Component;
+
+            //get actions allowed on a widget such as delete, edit etc
+            const actions = Widgets[widgetType].actions.map((actionName) => {
+              const onClick = widgetActionHandlers[actionName](id);
+              //return the action component based on actionName with action handler
+              return WidgetActions[actionName](onClick);
+            });
+
             return (
-              <ResizableWrapper
-                key={id}
-                id={id}
-                getResizedDimension={getDimension}
-              >
-                <WidgetCom key={widgetType} />
-              </ResizableWrapper>
+              <WidgetActionWrapper actions={actions} key={id}>
+                <ResizableWrapper
+                  key={id}
+                  id={id}
+                  getResizedDimension={getResizedDimension}
+                  previousHeight={dimension?.height}
+                  previousWidth={dimension?.width}
+                >
+                  <WidgetComponent key={widgetType} widgetId={id} />
+                </ResizableWrapper>
+              </WidgetActionWrapper>
             );
           })}
         </div>
